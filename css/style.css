@@ -1,0 +1,715 @@
+/* ============================================
+   style.css — Life Dashboard
+   Satu file CSS untuk semua tampilan
+   ============================================ */
+
+
+/* ============================================
+   1. VARIABEL WARNA (LIGHT MODE)
+   ============================================ */
+
+/* CSS Variables: simpan warna di satu tempat supaya mudah diganti.
+   Saat dark mode aktif, variabel-variabel ini di-override di body.dark */
+:root {
+  --bg-color:       #f0f2f5;                        /* Latar halaman */
+  --card-color:     #ffffff;                        /* Latar kartu/section */
+  --text-primary:   #1a1a2e;                        /* Teks utama */
+  --text-secondary: #555577;                        /* Teks sekunder/label */
+  --accent-color:   #6c63ff;                        /* Warna aksen (ungu) */
+  --accent-hover:   #5a52d5;                        /* Aksen saat hover */
+  --border-color:   #e0e0ef;                        /* Garis batas */
+  --shadow:         0 4px 16px rgba(108,99,255,.08);/* Bayangan kartu */
+  --radius:         16px;                           /* Sudut melengkung */
+  --font:           'Segoe UI', Arial, sans-serif;  /* Font utama */
+}
+
+/* Mencegah "flash" putih sebelum JS terapkan dark mode.
+   Script kecil di <head> menambahkan class ini ke <html> */
+html.preload-dark body { background-color: #0f0f1a; }
+
+
+/* ============================================
+   2. RESET & BASE
+   ============================================ */
+
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font);
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  /* Animasi smooth saat ganti tema */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hilangkan outline default browser, ganti dengan ring aksen */
+:focus-visible {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+
+/* ============================================
+   3. LAYOUT CONTAINER
+   ============================================ */
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 20px 48px; /* bawah lebih besar biar ada ruang napas */
+  display: grid;
+  /* Di layar lebar (≥ 700px): Timer & Todo berdampingan, 2 kolom
+     Di layar kecil: semua satu kolom (lihat bagian Responsive) */
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    "greeting  greeting"
+    "timer     todo"
+    "links     links";
+  gap: 24px;
+}
+
+/* Terapkan grid-area ke tiap section */
+#section-greeting { grid-area: greeting; }
+#section-timer    { grid-area: timer; }
+#section-todo     { grid-area: todo; }
+#section-links    { grid-area: links; }
+
+
+/* ============================================
+   4. KARTU SECTION (tampilan kotak putih)
+   ============================================ */
+
+section {
+  background-color: var(--card-color);
+  border-radius: var(--radius);
+  padding: 28px 28px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Judul kecil di atas setiap section */
+.section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+
+
+/* ============================================
+   5. SECTION GREETING
+   ============================================ */
+
+#section-greeting {
+  text-align: center;
+  position: relative; /* Supaya tombol tema bisa di-posisikan absolut */
+  padding-top: 52px;
+}
+
+/* Tombol 🌙 / ☀️ di pojok kanan atas */
+#theme-toggle {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color);
+  background: var(--bg-color);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s, transform 0.2s, border-color 0.2s;
+}
+
+#theme-toggle:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  transform: scale(1.1) rotate(15deg);
+}
+
+/* "Good Morning, Budi!" */
+#greeting-text {
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--accent-color);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+/* Jam besar: 08:45:32 */
+#clock {
+  font-size: 3.8rem;
+  font-weight: 200;
+  letter-spacing: 5px;
+  margin-bottom: 6px;
+  font-variant-numeric: tabular-nums; /* Angka tidak geser saat berubah */
+}
+
+/* Tanggal: Sabtu, 5 September 2026 */
+#date-display {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 22px;
+}
+
+/* Form input nama: input + tombol sejajar */
+#name-form {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#name-input {
+  width: 220px;
+  padding: 10px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#name-input:focus { border-color: var(--accent-color); }
+
+#name-save-btn {
+  padding: 10px 20px;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+#name-save-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Tombol ganti nama (muncul setelah nama tersimpan) */
+#name-change-btn {
+  margin-top: 10px;
+  background: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.83rem;
+  font-family: var(--font);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+#name-change-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+
+/* ============================================
+   6. SECTION FOCUS TIMER
+   ============================================ */
+
+#section-timer {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* Tengahkan vertikal dalam kartu */
+}
+
+/* Angka countdown: 25:00 */
+#timer-display {
+  font-size: 4.5rem;
+  font-weight: 200;
+  letter-spacing: 6px;
+  margin: 4px 0 6px;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s;
+  line-height: 1;
+}
+
+/* Warna merah + animasi berkedip saat < 1 menit */
+#timer-display.timer-warning {
+  color: #e74c3c;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.04); }
+}
+
+/* Teks status: "Sedang fokus...", "Dijeda", dll */
+#timer-status {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  min-height: 1.4em;
+  margin-bottom: 22px;
+}
+
+/* Grup tombol Start / Stop / Reset */
+#timer-controls {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+#timer-controls button {
+  padding: 11px 24px;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, transform 0.1s, opacity 0.2s;
+}
+
+#timer-start-btn { background-color: var(--accent-color); color: #fff; }
+#timer-stop-btn  { background-color: #f39c12; color: #fff; }
+#timer-reset-btn { background-color: var(--border-color); color: var(--text-secondary); }
+
+#timer-start-btn:hover:not(:disabled) { background-color: var(--accent-hover); transform: translateY(-2px); }
+#timer-stop-btn:hover:not(:disabled)  { background-color: #e67e22; transform: translateY(-2px); }
+#timer-reset-btn:hover                { background-color: #d0d0e0; transform: translateY(-2px); }
+
+#timer-controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ============================================
+   7. SECTION TO-DO LIST
+   ============================================ */
+
+/* Form tambah task */
+#todo-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+#todo-input {
+  flex: 1;
+  padding: 11px 16px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#todo-input:focus { border-color: var(--accent-color); }
+
+#todo-add-btn {
+  padding: 11px 18px;
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+#todo-add-btn:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Pesan error (duplikat, kosong, dll) */
+.error-msg {
+  color: #e74c3c;
+  font-size: 0.83rem;
+  min-height: 1.2em;
+  margin-bottom: 4px;
+}
+
+/* Tombol filter: Semua / Aktif / Selesai */
+#todo-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  padding: 5px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 20px;
+  font-size: 0.82rem;
+  font-family: var(--font);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover          { border-color: var(--accent-color); color: var(--accent-color); }
+.filter-btn.active         { background-color: var(--accent-color); border-color: var(--accent-color); color: #fff; }
+
+/* Daftar task */
+#todo-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+  /* Scroll jika task banyak, supaya tidak mendorong layout */
+  max-height: 340px;
+  overflow-y: auto;
+  padding-right: 2px; /* Ruang untuk scrollbar */
+}
+
+/* Scrollbar custom yang lebih kecil dan elegan */
+#todo-list::-webkit-scrollbar       { width: 4px; }
+#todo-list::-webkit-scrollbar-track { background: transparent; }
+#todo-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 2px; }
+
+/* Satu baris task */
+.todo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 10px;
+  background-color: var(--bg-color);
+  transition: border-color 0.2s, opacity 0.2s;
+}
+
+.todo-item:hover              { border-color: var(--accent-color); }
+.todo-item.done               { opacity: 0.5; }
+.todo-item.done .todo-text    { text-decoration: line-through; color: var(--text-secondary); }
+
+/* Tombol centang */
+.btn-check {
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 2px;
+  line-height: 1;
+  transition: transform 0.15s;
+}
+.btn-check:hover { transform: scale(1.25); }
+
+/* Teks task */
+.todo-text {
+  flex: 1;
+  font-size: 0.93rem;
+  color: var(--text-primary);
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* Input teks saat mode edit inline */
+.todo-edit-input {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1.5px solid var(--accent-color);
+  border-radius: 6px;
+  font-size: 0.93rem;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background-color: var(--card-color);
+  outline: none;
+}
+
+/* Grup tombol aksi (edit/simpan/batal/hapus) */
+.todo-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.btn-action {
+  background: none;
+  border: none;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 4px 5px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;  /* Tersembunyi, muncul saat item di-hover */
+  transition: background-color 0.15s, transform 0.1s, opacity 0.15s;
+}
+
+.todo-item:hover .btn-action { opacity: 1; }
+.btn-action:hover             { background-color: var(--border-color); transform: scale(1.15); }
+
+/* Teks jika list kosong */
+.todo-empty {
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  padding: 20px 0;
+  list-style: none;
+}
+
+/* Counter "X task tersisa" */
+.todo-count-text {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 4px;
+}
+
+
+/* ============================================
+   8. SECTION QUICK LINKS
+   ============================================ */
+
+/* Grid kartu link — otomatis mengisi kolom selebar min 130px */
+#links-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+/* Kartu satu link */
+.link-card {
+  position: relative;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+}
+
+.link-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(108,99,255,.15);
+}
+
+/* Area klik yang membuka URL */
+.link-anchor {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 10px;
+  text-decoration: none;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  transition: background-color 0.2s;
+}
+
+.link-anchor:hover { background-color: var(--card-color); }
+
+.link-emoji {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.link-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+  color: var(--text-secondary);
+  word-break: break-word;
+}
+
+/* Tombol ✕ hapus di pojok kartu */
+.link-delete-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,.1);
+  font-size: 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0; /* Muncul saat kartu di-hover */
+  transition: opacity 0.15s, background-color 0.15s;
+  color: var(--text-secondary);
+}
+
+.link-card:hover .link-delete-btn { opacity: 1; }
+.link-delete-btn:hover             { background-color: #e74c3c; color: #fff; }
+
+/* Teks jika belum ada link */
+.links-empty {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  margin-bottom: 14px;
+}
+
+/* Tombol "Tambah Link" (dashed border) */
+#links-toggle-btn {
+  padding: 9px 18px;
+  background: none;
+  border: 1.5px dashed var(--accent-color);
+  border-radius: 8px;
+  color: var(--accent-color);
+  font-size: 0.88rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  margin-bottom: 12px;
+}
+
+#links-toggle-btn:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+/* Form input link baru */
+#links-form { margin-top: 2px; }
+
+#links-form-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+#link-name-input,
+#link-url-input {
+  flex: 1;
+  min-width: 150px;
+  padding: 9px 13px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-family: var(--font);
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+#link-name-input:focus,
+#link-url-input:focus { border-color: var(--accent-color); }
+
+#link-save-btn,
+#link-cancel-btn {
+  padding: 9px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  font-family: var(--font);
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s, transform 0.1s;
+}
+
+#link-save-btn   { background-color: var(--accent-color); color: #fff; }
+#link-cancel-btn { background-color: var(--border-color); color: var(--text-secondary); }
+
+#link-save-btn:hover   { background-color: var(--accent-hover); transform: translateY(-1px); }
+#link-cancel-btn:hover { background-color: #d0d0e0; }
+
+
+/* ============================================
+   9. DARK MODE
+   ============================================ */
+
+/* Saat JS tambahkan class 'dark' ke <body>,
+   variabel warna di-override di sini.
+   Semua elemen yang pakai var(--warna) ikut berubah otomatis. */
+body.dark {
+  --bg-color:       #0f0f1a;
+  --card-color:     #1a1a2e;
+  --text-primary:   #e8e8f0;
+  --text-secondary: #8888aa;
+  --accent-color:   #7c73ff;
+  --accent-hover:   #6c63ff;
+  --border-color:   #2a2a45;
+  --shadow:         0 4px 20px rgba(0,0,0,.45);
+}
+
+/* Beberapa elemen perlu override manual karena pakai warna hard-coded */
+body.dark #theme-toggle         { background-color: var(--card-color); }
+body.dark .link-anchor          { background-color: var(--card-color); }
+body.dark .link-anchor:hover    { background-color: #22223a; }
+body.dark .todo-item            { background-color: var(--card-color); }
+body.dark #timer-reset-btn      { background-color: #2a2a45; color: var(--text-secondary); }
+body.dark #timer-reset-btn:hover{ background-color: #3a3a55; }
+body.dark #link-cancel-btn      { background-color: #2a2a45; color: var(--text-secondary); }
+body.dark .link-delete-btn      { background: rgba(255,255,255,.08); }
+body.dark .todo-edit-input      { background-color: #22223a; }
+
+
+/* ============================================
+   10. FOOTER
+   ============================================ */
+
+.footer {
+  text-align: center;
+  padding: 8px 0 4px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  opacity: 0.7;
+}
+
+
+/* ============================================
+   11. RESPONSIVE — MOBILE (≤ 680px)
+   ============================================ */
+
+/* Di layar kecil (HP), semua section disusun satu kolom */
+@media (max-width: 680px) {
+  .container {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "greeting"
+      "timer"
+      "todo"
+      "links";
+    padding: 20px 14px 40px;
+    gap: 16px;
+  }
+
+  section { padding: 22px 18px; }
+
+  #clock          { font-size: 2.8rem; letter-spacing: 3px; }
+  #greeting-text  { font-size: 1.5rem; }
+  #timer-display  { font-size: 3.5rem; }
+
+  #todo-list { max-height: 260px; }
+
+  #links-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  }
+}

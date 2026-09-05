@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <!-- =============================================
+       HEAD: Informasi tentang halaman ini
+       (tidak terlihat di browser, tapi penting!)
+       ============================================= -->
+
+  <!-- Memberitahu browser ini adalah HTML5 -->
+  <meta charset="UTF-8" />
+
+  <!-- Supaya tampilan pas di layar HP maupun laptop -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Judul yang muncul di tab browser -->
+  <title>Life Dashboard</title>
+
+  <!-- Menghubungkan file CSS kita ke halaman ini -->
+  <link rel="stylesheet" href="css/style.css" />
+
+  <!-- Script kecil ini dijalankan SEBELUM halaman dirender
+       supaya tema langsung aktif, tidak ada "flash" putih sesaat -->
+  <script>
+    (function() {
+      var saved = localStorage.getItem('theme');
+      var prefersDark = window.matchMedia &&
+                        window.matchMedia('(prefers-color-scheme: dark)').matches;
+      if (saved === 'dark' || (!saved && prefersDark)) {
+        document.documentElement.classList.add('preload-dark');
+      }
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- =============================================
+       BODY: Semua yang terlihat di browser ada di sini
+       ============================================= -->
+
+  <!-- Wrapper utama: membungkus seluruh konten halaman -->
+  <div class="container">
+
+    <!-- ---- SECTION 1: GREETING & WAKTU ---- -->
+    <section id="section-greeting">
+
+      <!-- Tombol dark/light mode (akan diaktifkan di Tahap 7) -->
+      <button id="theme-toggle" title="Ganti tema">🌙</button>
+
+      <!-- Teks greeting: "Good Morning, Budi!" -->
+      <!-- id="greeting-text" dipakai JS untuk mengubah isinya -->
+      <h1 id="greeting-text">Selamat Datang!</h1>
+
+      <!-- Tampilan jam besar, misal: 08:45:32 -->
+      <p id="clock">00:00:00</p>
+
+      <!-- Tampilan tanggal, misal: Sabtu, 5 September 2026 -->
+      <p id="date-display">--</p>
+
+      <!-- Form untuk input nama user -->
+      <!-- Muncul hanya saat user belum set nama, atau saat mau ganti nama -->
+      <div id="name-form">
+        <input type="text" id="name-input" placeholder="Masukkan namamu..." maxlength="30" />
+        <button id="name-save-btn">Simpan</button>
+      </div>
+
+      <!-- Tombol untuk ganti nama (muncul setelah nama tersimpan) -->
+      <button id="name-change-btn" style="display:none;">✏️ Ganti Nama</button>
+
+    </section>
+
+    <!-- ---- SECTION 2: FOCUS TIMER ---- -->
+    <section id="section-timer">
+
+      <!-- Judul section -->
+      <h2 class="section-title">🍅 Focus Timer</h2>
+
+      <!-- Tampilan angka countdown, misal: 25:00 -->
+      <!-- id="timer-display" dipakai JS untuk mengubah angkanya -->
+      <div id="timer-display">25:00</div>
+
+      <!-- Label status timer: "Siap", "Sedang berjalan...", "Selesai!" -->
+      <p id="timer-status">Siap memulai sesi fokus?</p>
+
+      <!-- Grup tombol Start, Stop, Reset -->
+      <div id="timer-controls">
+        <button id="timer-start-btn">▶ Start</button>
+        <button id="timer-stop-btn" disabled>⏸ Stop</button>
+        <button id="timer-reset-btn">↺ Reset</button>
+      </div>
+
+    </section>
+
+    <!-- ---- SECTION 3: TO-DO LIST ---- -->
+    <section id="section-todo">
+
+      <h2 class="section-title">✅ To-Do List</h2>
+
+      <!-- Form tambah task baru: input + tombol Tambah -->
+      <div id="todo-form">
+        <input
+          type="text"
+          id="todo-input"
+          placeholder="Tambah task baru..."
+          maxlength="100"
+        />
+        <button id="todo-add-btn">+ Tambah</button>
+      </div>
+
+      <!-- Pesan error muncul di sini (misal: task duplikat) -->
+      <p id="todo-error" class="error-msg"></p>
+
+      <!-- Filter tombol: Semua / Aktif / Selesai -->
+      <div id="todo-filters">
+        <button class="filter-btn active" data-filter="all">Semua</button>
+        <button class="filter-btn" data-filter="active">Aktif</button>
+        <button class="filter-btn" data-filter="done">Selesai</button>
+      </div>
+
+      <!-- Daftar task akan di-render oleh JavaScript di sini -->
+      <!-- ul = unordered list (daftar tidak bernomor) -->
+      <ul id="todo-list"></ul>
+
+      <!-- Info jumlah task di bawah daftar -->
+      <p id="todo-count" class="todo-count-text"></p>
+
+    </section>
+
+    <!-- ---- SECTION 4: QUICK LINKS ---- -->
+    <section id="section-links">
+
+      <h2 class="section-title">🔗 Quick Links</h2>
+
+      <!-- Grid berisi kartu-kartu link, diisi oleh JavaScript -->
+      <div id="links-grid"></div>
+
+      <!-- Tombol untuk buka/tutup form tambah link baru -->
+      <button id="links-toggle-btn">+ Tambah Link</button>
+
+      <!-- Form tambah link: tersembunyi dulu, muncul saat tombol diklik -->
+      <div id="links-form" style="display:none;">
+        <div id="links-form-row">
+          <input
+            type="text"
+            id="link-name-input"
+            placeholder="Nama (misal: YouTube)"
+            maxlength="30"
+          />
+          <input
+            type="url"
+            id="link-url-input"
+            placeholder="URL (misal: https://youtube.com)"
+          />
+          <button id="link-save-btn">Simpan</button>
+          <button id="link-cancel-btn">Batal</button>
+        </div>
+        <!-- Pesan error untuk form link -->
+        <p id="link-error" class="error-msg"></p>
+      </div>
+
+    </section>
+
+  </div><!-- akhir .container -->
+
+  <!-- Footer kecil di bawah -->
+  <footer class="footer">
+    Life Dashboard &mdash; dibuat dengan HTML, CSS &amp; Vanilla JS
+  </footer>
+
+  <!-- Menghubungkan file JavaScript kita ke halaman ini -->
+  <!-- Diletakkan di BAWAH body supaya HTML selesai dimuat dulu sebelum JS berjalan -->
+  <script src="js/app.js"></script>
+
+</body>
+</html>
